@@ -1,0 +1,89 @@
+ //OOPs playlist link:https://www.youtube.com/playlist?list=PLjSR4dIhf6y7pe8UT3p1DxBpDxbAq4Qoy
+
+//Program to understand the Implementation of LRUCache Replacement Algorithm
+
+import java.util.*;
+
+import lruimplementation.LRUCache.Node;
+
+public class LRUCache {
+	    class Node{
+	        int key;
+	        int value;
+	        Node left;
+	        Node right;
+	        Node(int key,int value){
+	            this.key=key;
+	            this.value=value;
+	        }
+	    }
+	    
+	    Deque<Node> dq;
+	    Map<Integer,Node> cache;
+	    int capacity;
+	    int size;
+	    
+	    public LRUCache(int capacity) {
+	         this.dq=new ArrayDeque<>();
+	         this.cache=new HashMap<>();
+	         this.size=0;
+	         this.capacity=capacity;      
+	    }
+	    
+	    public int get(int key) {
+	        if(cache.containsKey(key)){
+	            Node currNode=cache.get(key);
+	            dq.remove(currNode);
+	            dq.addFirst(currNode);
+	            return currNode.value;
+	        }else{
+	            return -1;
+	        }
+	    }
+	    
+	    public void put(int key, int value) {
+	        if(cache.containsKey(key)){
+	        	Node currNode=cache.get(key);
+	        	dq.remove(currNode);
+	        	
+	        	currNode.value=value;
+	        	dq.addFirst(currNode);
+	        }else{
+	        	Node newNode=new Node(key,value);
+	        	dq.addFirst(newNode);
+	        	
+	        	cache.put(key, newNode);
+	        	this.size++;
+	        	
+	        	if(this.size>capacity){
+	        		Node LRUNode=dq.getLast();
+	        		dq.removeLast();
+	        		cache.remove(LRUNode.key);
+	        		this.size--;
+	        	}
+	        	
+	        }
+	    }
+	
+	    public void display(){
+			Iterator<Node> itr=dq.iterator();
+			while(itr.hasNext()){
+				Node node=itr.next();
+				System.out.print("("+node.key+"/"+node.value+")"+"  ");
+			}
+			System.out.println();
+		}
+		public static void main(String[] args) {
+	 LRUCache obj=new LRUCache(3);
+	 obj.put(3, 30);
+	 obj.put(4, 40);
+	 obj.put(5, 50);
+	 obj.display();
+	 System.out.println(obj.get(3));
+	 obj.display();
+	 obj.put(6, 60);
+	 obj.display();
+	 System.out.println(obj.get(4));
+	 obj.display();
+		}
+   }
