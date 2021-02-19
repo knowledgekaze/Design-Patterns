@@ -1,0 +1,178 @@
+ //OOPs playlist link:https://www.youtube.com/playlist?list=PLjSR4dIhf6y7pe8UT3p1DxBpDxbAq4Qoy
+
+//Program to understand the Implementation of LRUCache Replacement algorithm.
+
+import java.util.*;
+
+public class LRUCache {
+	class Node {
+		int key;
+		int value;
+		
+		Node prev;
+		Node next;
+
+		Node(int key, int value) {
+			this.key = key;
+			this.value = value;
+			this.prev = null;
+			this.next = null;
+		}
+	}
+
+	Map<Integer, Node> cache;
+	Node head;
+	Node tail;
+	int capacity;
+	int size;
+
+	public LRUCache(int capacity) {
+		this.head = null;
+		this.tail = null;
+		this.size = 0;
+		this.capacity = capacity;
+		this.cache = new HashMap<>();
+	}
+
+	public int get(int key) {
+		if (cache.containsKey(key)) {
+			// get the node from the cache
+			Node currNode = cache.get(key);
+			// update the position 
+			if (currNode == this.head) {
+				// no update required (node is already at the head)
+			} else if (currNode == this.tail) {
+				// update position 
+				Node prevNode = currNode.prev;
+				prevNode.next = null;
+				// assign the new tail
+				this.tail = prevNode;
+
+				// update the head
+				this.head.prev = currNode;
+				currNode.next = this.head;
+				currNode.prev = null;
+				// assign the new head
+				this.head = currNode;
+			} else {
+				// node to be updated is in the middle
+				Node prevNode = currNode.prev;
+				Node nextNode = currNode.next;
+				prevNode.next = nextNode;
+				nextNode.prev = prevNode;
+
+				this.head.prev = currNode;
+				currNode.next = this.head;
+				currNode.prev = null;
+				// assign the new head
+				this.head = currNode;
+			}
+			return this.head.value;
+		} else {
+			return -1;
+		}
+	}
+	
+
+	public void put(int key, int value) {
+		if (cache.containsKey(key)) {
+			// get the node from the cache and update it
+			Node currNode = cache.get(key);
+			currNode.value = value;
+
+			// now update the node position
+			if (currNode == this.head) {
+				// no update required as the node is already at the head
+			} else if (currNode == this.tail) {
+				// update position 
+				// remove the tail node & make it new head
+				// make new tail i.e. 2nd last node as new tail
+				Node prevNode = currNode.prev;
+				prevNode.next = null;
+
+				// assign the new tail 
+				this.tail = prevNode;
+
+				// update the head
+				this.head.prev = currNode;
+				currNode.next = this.head;
+				currNode.prev = null;
+				// assign the new head
+				this.head = currNode;
+			} else {
+				// node to be updated is in the middle
+				Node prevNode = currNode.prev;
+				Node nextNode = currNode.next;
+				prevNode.next = nextNode;
+				nextNode.prev = prevNode;
+				
+				// update the head
+				this.head.prev = currNode;
+				currNode.next = this.head;
+				currNode.prev = null;
+				// assign the new head
+				this.head = currNode;
+			}
+		} else {
+			// make a new node
+			Node newNode = new Node(key, value);
+			// update the cache
+			cache.put(key, newNode);
+			// if the DLL is empty
+			if (this.head == null) {
+				this.head = newNode;
+				this.tail = newNode;
+				this.size++;
+				return;
+			}
+			// add new node to DLL
+			// if size>capacity then delete the LRU node i.e the tail node
+
+			// update the head
+			this.head.prev = newNode;
+			newNode.next = this.head;
+			
+			// assign the new head
+			this.head = newNode;
+
+			// update the size
+			this.size++;
+
+			if (this.size > capacity) {
+				// remove LRU node i.e tail node
+				Node tailPrev = this.tail.prev;
+				tailPrev.next = null;
+				this.tail.prev = null;
+				// remove this tail key from cache
+				cache.remove(this.tail.key);
+				
+				//assign the new tail
+				this.tail = tailPrev;
+				// update the size
+				this.size--;
+			}
+		}
+	}
+	public void display(){
+		Node temp=this.head;
+		while(temp!=null){
+			System.out.print("("+ temp.key+"/"+temp.value+")"+"  ");
+			temp=temp.next;
+		}
+		System.out.println();
+	}
+	
+	public static void main(String[] args) {
+ LRUCache obj=new LRUCache(3);
+ obj.put(3, 30);
+ obj.put(4, 40);
+ obj.put(5, 50);
+ obj.display();
+ System.out.println(obj.get(3));
+ obj.display();
+ obj.put(6, 60);
+ obj.display();
+ System.out.println(obj.get(4));
+	}
+
+}	
