@@ -1,3 +1,7 @@
+ //OOPs playlist link:https://www.youtube.com/playlist?list=PLjSR4dIhf6y7pe8UT3p1DxBpDxbAq4Qoy
+
+//Program to understand the Implementation of two stacks in an single array
+
 public class TwoStacks {
 	int size;
 	int top1, top2;
