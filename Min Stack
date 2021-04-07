@@ -1,0 +1,57 @@
+ //OOPs playlist link:https://www.youtube.com/playlist?list=PLjSR4dIhf6y7pe8UT3p1DxBpDxbAq4Qoy
+
+//Design a stack that supports getMin() in O(1) time and O(1) extra space
+
+//Problem Link:
+// GFG:https://www.geeksforgeeks.org/design-a-stack-that-supports-getmin-in-o1-time-and-o1-extra-space/
+// LeetCode:https://leetcode.com/problems/min-stack/
+
+import java.util.*;
+
+public class MinStack {
+	Stack<Integer> st = new Stack<>();
+	int min;
+
+	public MinStack() {
+		st = new Stack<>();
+		min = Integer.MAX_VALUE;
+	}
+
+	public void push(int x) {
+		if (st.isEmpty()) {
+			st.push(x);
+			min = x;
+		} else {
+			if (x >= min)
+				st.push(x);
+			else {
+				int newVal = 2 * x - min;
+				st.push(newVal);
+				min = x;
+			}
+		}
+	}
+
+	public int pop() {
+		int val = st.pop();
+		if (val < min) {
+			int prevMin = (2 * min - val);
+			val=min;
+			min=prevMin;
+		}
+		return val;
+	}
+
+	public int top() {
+		int val = st.peek();
+		if (val >= min)
+			return val;
+		else {
+			return  min;
+		}
+	}
+
+	public int getMin() {
+		return min;
+	}
+}
